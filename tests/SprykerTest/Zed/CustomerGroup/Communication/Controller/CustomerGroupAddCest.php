@@ -5,9 +5,9 @@
  * Use of this software requires acceptance of the Evaluation License Agreement. See LICENSE file.
  */
 
-namespace SprykerTest\Zed\CustomerGroup\Presentation;
+namespace SprykerTest\Zed\CustomerGroup\Communication\Controller;
 
-use SprykerTest\Zed\CustomerGroup\CustomerGroupPresentationTester;
+use SprykerTest\Zed\CustomerGroup\CustomerGroupCommunicationTester;
 use SprykerTest\Zed\CustomerGroup\PageObject\CustomerGroupAddPage;
 
 /**
@@ -15,7 +15,8 @@ use SprykerTest\Zed\CustomerGroup\PageObject\CustomerGroupAddPage;
  * @group SprykerTest
  * @group Zed
  * @group CustomerGroup
- * @group Presentation
+ * @group Communication
+ * @group Controller
  * @group CustomerGroupAddCest
  * Add your own group annotations below this line
  */
@@ -23,11 +24,11 @@ class CustomerGroupAddCest
 {
 
     /**
-     * @param \SprykerTest\Zed\CustomerGroup\CustomerGroupPresentationTester $i
+     * @param \SprykerTest\Zed\CustomerGroup\CustomerGroupCommunicationTester $i
      *
      * @return void
      */
-    public function breadcrumbIsVisible(CustomerGroupPresentationTester $i)
+    public function breadcrumbIsVisible(CustomerGroupCommunicationTester $i)
     {
         $i->amOnPage(CustomerGroupAddPage::URL);
 
