@@ -7,7 +7,7 @@
 
 namespace Spryker\Zed\CustomerGroup\Dependency\Service;
 
-class CustomerGroupToUtilSanitizeBridge implements CustomerGroupToUtilSanitizeInterface
+class CustomerGroupToUtilSanitizeServiceBridge implements CustomerGroupToUtilSanitizeServiceInterface
 {
     /**
      * @var \Spryker\Service\UtilSanitize\UtilSanitizeServiceInterface
