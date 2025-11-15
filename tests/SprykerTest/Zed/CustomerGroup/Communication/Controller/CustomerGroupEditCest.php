@@ -5,7 +5,7 @@
  * Use of this software requires acceptance of the Evaluation License Agreement. See LICENSE file.
  */
 
-namespace SprykerTest\Zed\CustomerGroup\Communication\Controllrt;
+namespace SprykerTest\Zed\CustomerGroup\Communication\Controller;
 
 use SprykerTest\Zed\CustomerGroup\CustomerGroupCommunicationTester;
 use SprykerTest\Zed\CustomerGroup\PageObject\CustomerGroupEditPage;
@@ -17,7 +17,7 @@ use SprykerTest\Zed\CustomerGroup\PageObject\CustomerGroupEditPage;
  * @group Zed
  * @group CustomerGroup
  * @group Communication
- * @group Controllrt
+ * @group Controller
  * @group CustomerGroupEditCest
  * Add your own group annotations below this line
  */
