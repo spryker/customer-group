@@ -38,19 +38,11 @@ class CustomerGroupHelper extends Module
         return $customerGroupTransfer;
     }
 
-    /**
-     * @return \Spryker\Zed\CustomerGroup\Business\CustomerGroupFacadeInterface
-     */
     private function getCustomerGroupFacade(): CustomerGroupFacadeInterface
     {
         return $this->getLocator()->customerGroup()->facade();
     }
 
-    /**
-     * @param int $idCustomerGroup
-     *
-     * @return void
-     */
     private function cleanupCustomerGroup(int $idCustomerGroup): void
     {
         $this->debug(sprintf('Deleting CustomerGroup: %d', $idCustomerGroup));
@@ -60,9 +52,6 @@ class CustomerGroupHelper extends Module
             ->delete();
     }
 
-    /**
-     * @return \Orm\Zed\CustomerGroup\Persistence\SpyCustomerGroupQuery
-     */
     private function getCustomerGroupQuery(): SpyCustomerGroupQuery
     {
         return SpyCustomerGroupQuery::create();

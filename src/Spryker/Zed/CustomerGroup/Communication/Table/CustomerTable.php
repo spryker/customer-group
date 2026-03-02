@@ -66,10 +66,6 @@ class CustomerTable extends AbstractTable
      */
     protected $customerGroupTransfer;
 
-    /**
-     * @param \Spryker\Zed\CustomerGroup\Persistence\CustomerGroupQueryContainerInterface $customerQueryContainer
-     * @param \Generated\Shared\Transfer\CustomerGroupTransfer $customerGroupTransfer
-     */
     public function __construct(CustomerGroupQueryContainerInterface $customerQueryContainer, CustomerGroupTransfer $customerGroupTransfer)
     {
         $this->customerGroupQueryContainer = $customerQueryContainer;

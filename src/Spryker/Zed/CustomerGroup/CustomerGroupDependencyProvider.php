@@ -107,11 +107,6 @@ class CustomerGroupDependencyProvider extends AbstractBundleDependencyProvider
         return $container;
     }
 
-    /**
-     * @param \Spryker\Zed\Kernel\Container $container
-     *
-     * @return \Spryker\Zed\Kernel\Container
-     */
     protected function addUtilSanitizeService(Container $container): Container
     {
         $container->set(static::SERVICE_UTIL_SANITIZE, function (Container $container) {

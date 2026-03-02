@@ -13,11 +13,6 @@ use Propel\Runtime\Collection\Collection;
 
 class CustomerGroupMapper implements CustomerGroupMapperInterface
 {
-    /**
-     * @param \Propel\Runtime\Collection\Collection $customerGroupEntities
-     *
-     * @return \Generated\Shared\Transfer\CustomerGroupCollectionTransfer
-     */
     public function mapCustomerGroupEntitiesToCustomerGroupCollectionTransfer(Collection $customerGroupEntities): CustomerGroupCollectionTransfer
     {
         $customerGroupCollectionTransfer = new CustomerGroupCollectionTransfer();

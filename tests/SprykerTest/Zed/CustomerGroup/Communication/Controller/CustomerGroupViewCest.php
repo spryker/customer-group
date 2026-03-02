@@ -23,11 +23,6 @@ use SprykerTest\Zed\CustomerGroup\PageObject\CustomerGroupViewPage;
  */
 class CustomerGroupViewCest
 {
-    /**
-     * @param \SprykerTest\Zed\CustomerGroup\CustomerGroupCommunicationTester $i
-     *
-     * @return void
-     */
     public function breadcrumbIsVisible(CustomerGroupCommunicationTester $i): void
     {
         $customerGroupTransfer = $i->haveCustomerGroup();

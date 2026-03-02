@@ -28,9 +28,6 @@ class CustomerGroup implements CustomerGroupInterface
      */
     protected $queryContainer;
 
-    /**
-     * @param \Spryker\Zed\CustomerGroup\Persistence\CustomerGroupQueryContainerInterface $queryContainer
-     */
     public function __construct(CustomerGroupQueryContainerInterface $queryContainer)
     {
         $this->queryContainer = $queryContainer;
@@ -98,11 +95,6 @@ class CustomerGroup implements CustomerGroupInterface
         });
     }
 
-    /**
-     * @param \Generated\Shared\Transfer\CustomerGroupTransfer $customerGroupTransfer
-     *
-     * @return \Generated\Shared\Transfer\CustomerGroupTransfer
-     */
     protected function executeAddTransaction(CustomerGroupTransfer $customerGroupTransfer): CustomerGroupTransfer
     {
         $customerGroupEntity = new SpyCustomerGroup();
@@ -116,11 +108,6 @@ class CustomerGroup implements CustomerGroupInterface
         return $customerGroupTransfer;
     }
 
-    /**
-     * @param \Generated\Shared\Transfer\CustomerGroupTransfer $customerGroupTransfer
-     *
-     * @return void
-     */
     protected function executeUpdateTransaction(CustomerGroupTransfer $customerGroupTransfer): void
     {
         $customerGroupEntity = $this->getCustomerGroup($customerGroupTransfer);

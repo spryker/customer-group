@@ -23,22 +23,12 @@ use SprykerTest\Zed\CustomerGroup\PageObject\CustomerGroupListPage;
  */
 class CustomerGroupListCest
 {
-    /**
-     * @param \SprykerTest\Zed\CustomerGroup\CustomerGroupCommunicationTester $i
-     *
-     * @return void
-     */
     public function breadcrumbIsVisible(CustomerGroupCommunicationTester $i): void
     {
         $i->amOnPage(CustomerGroupListPage::URL);
         $i->seeBreadcrumbNavigation('Customers / Customer Groups');
     }
 
-    /**
-     * @param \SprykerTest\Zed\CustomerGroup\CustomerGroupCommunicationTester $i
-     *
-     * @return void
-     */
     public function showListOfCustomerGroup(CustomerGroupCommunicationTester $i): void
     {
         $i->listDataTable(CustomerGroupListPage::URL . '/index/table');

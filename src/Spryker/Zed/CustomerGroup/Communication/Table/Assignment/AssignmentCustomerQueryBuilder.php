@@ -19,9 +19,6 @@ class AssignmentCustomerQueryBuilder implements AssignmentCustomerQueryBuilderIn
      */
     protected $customerQueryContainer;
 
-    /**
-     * @param \Spryker\Zed\CustomerGroup\Dependency\QueryContainer\CustomerGroupToCustomerQueryContainerInterface $customerQueryContainer
-     */
     public function __construct(CustomerGroupToCustomerQueryContainerInterface $customerQueryContainer)
     {
         $this->customerQueryContainer = $customerQueryContainer;

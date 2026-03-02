@@ -52,11 +52,6 @@ class CustomerGroupForm extends AbstractType
      */
     public const ID_CUSTOMER_GROUP = 'idCustomerGroup';
 
-    /**
-     * @param \Symfony\Component\OptionsResolver\OptionsResolver $resolver
-     *
-     * @return void
-     */
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefined(static::ID_CUSTOMER_GROUP);

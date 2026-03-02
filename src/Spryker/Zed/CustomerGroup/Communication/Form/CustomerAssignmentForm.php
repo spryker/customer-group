@@ -38,11 +38,6 @@ class CustomerAssignmentForm extends AbstractType
      */
     public const FIELD_IDS_CUSTOMER_TO_DE_ASSIGN_CSV = 'idsCustomerToDeAssign';
 
-    /**
-     * @param \Symfony\Component\OptionsResolver\OptionsResolver $resolver
-     *
-     * @return void
-     */
     public function configureOptions(OptionsResolver $resolver): void
     {
         parent::configureOptions($resolver);

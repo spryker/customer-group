@@ -44,9 +44,6 @@ class CustomerGroupPersistenceFactory extends AbstractPersistenceFactory
         return SpyCustomerQuery::create();
     }
 
-    /**
-     * @return \Spryker\Zed\CustomerGroup\Persistence\Propel\Mapper\CustomerGroupMapper
-     */
     public function createCustomerGroupMapper(): CustomerGroupMapper
     {
         return new CustomerGroupMapper();

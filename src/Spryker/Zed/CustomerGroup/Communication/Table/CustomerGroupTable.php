@@ -52,10 +52,6 @@ class CustomerGroupTable extends AbstractTable
      */
     protected $utilDateTimeService;
 
-    /**
-     * @param \Spryker\Zed\CustomerGroup\Persistence\CustomerGroupQueryContainerInterface $customerQueryContainer
-     * @param \Spryker\Service\UtilDateTime\UtilDateTimeServiceInterface $utilDateTimeService
-     */
     public function __construct(CustomerGroupQueryContainerInterface $customerQueryContainer, UtilDateTimeServiceInterface $utilDateTimeService)
     {
         $this->customerGroupQueryContainer = $customerQueryContainer;

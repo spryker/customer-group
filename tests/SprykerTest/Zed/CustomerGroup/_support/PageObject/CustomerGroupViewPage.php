@@ -9,11 +9,6 @@ namespace SprykerTest\Zed\CustomerGroup\PageObject;
 
 class CustomerGroupViewPage
 {
-    /**
-     * @param int $idCustomerGroup
-     *
-     * @return string
-     */
     public static function buildUrl(int $idCustomerGroup): string
     {
         return '/customer-group/view?id-customer-group=' . $idCustomerGroup;

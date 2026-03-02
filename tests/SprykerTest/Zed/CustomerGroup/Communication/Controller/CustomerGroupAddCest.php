@@ -23,11 +23,6 @@ use SprykerTest\Zed\CustomerGroup\PageObject\CustomerGroupAddPage;
  */
 class CustomerGroupAddCest
 {
-    /**
-     * @param \SprykerTest\Zed\CustomerGroup\CustomerGroupCommunicationTester $i
-     *
-     * @return void
-     */
     public function breadcrumbIsVisible(CustomerGroupCommunicationTester $i): void
     {
         $i->amOnPage(CustomerGroupAddPage::URL);

@@ -145,9 +145,6 @@ class CustomerGroupCommunicationFactory extends AbstractCommunicationFactory
         return $this->getProvidedDependency(CustomerGroupDependencyProvider::SERVICE_UTIL_ENCODING);
     }
 
-    /**
-     * @return \Spryker\Zed\CustomerGroup\Dependency\Service\CustomerGroupToUtilSanitizeServiceInterface
-     */
     public function getUtilSanitizeService(): CustomerGroupToUtilSanitizeServiceInterface
     {
         return $this->getProvidedDependency(CustomerGroupDependencyProvider::SERVICE_UTIL_SANITIZE);
