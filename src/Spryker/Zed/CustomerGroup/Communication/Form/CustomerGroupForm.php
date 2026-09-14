@@ -135,13 +135,13 @@ class CustomerGroupForm extends AbstractType
             $customerGroupQuery->filterByIdCustomerGroup($options[static::ID_CUSTOMER_GROUP], Criteria::NOT_EQUAL);
         }
 
-        $constraints[] = new Callback([
-            'callback' => function ($name, ExecutionContextInterface $context) use ($customerGroupQuery) {
+        $constraints[] = new Callback(
+            callback: function ($name, ExecutionContextInterface $context) use ($customerGroupQuery) {
                 if ($customerGroupQuery->findByName($name)->count() > 0) {
                     $context->addViolation('Name is already used');
                 }
             },
-        ]);
+        );
 
         return $constraints;
     }
