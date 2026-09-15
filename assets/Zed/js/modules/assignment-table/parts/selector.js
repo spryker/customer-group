@@ -8,10 +8,13 @@
 function ItemSelector() {
     var itemSelector = {};
     var selectedItems = {};
-    var idKey = 'id';
 
-    itemSelector.addItemToSelection = function (idItem) {
-        selectedItems[idItem] = idItem;
+    /**
+     * @param {number} idItem
+     * @param {Array} row - Row the item is shown with in the table of the selection.
+     */
+    itemSelector.addItemToSelection = function (idItem, row) {
+        selectedItems[idItem] = row;
     };
 
     itemSelector.removeItemFromSelection = function (idItem) {
@@ -26,15 +29,17 @@ function ItemSelector() {
         selectedItems = {};
     };
 
-    itemSelector.addAllToSelection = function (data) {
-        for (var i = 0; i < data.length; i++) {
-            var id = data[i][idKey];
-            selectedItems[id] = id;
-        }
-    };
-
     itemSelector.getSelected = function () {
         return selectedItems;
+    };
+
+    /**
+     * @return {Array} Rows of every selected item, the table of the selection is built from them.
+     */
+    itemSelector.getRows = function () {
+        return Object.keys(selectedItems).map(function (idItem) {
+            return selectedItems[idItem];
+        });
     };
 
     return itemSelector;

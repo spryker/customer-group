@@ -6,6 +6,7 @@
 'use strict';
 
 var ItemSelector = require('./selector');
+var tableAccess = require('ZedGuiModules/libs/table/table-access');
 
 var CHECKBOX_CHECKED_STATE_CHECKED = 'checked';
 var CHECKBOX_CHECKED_STATE_UN_CHECKED = 'un_checked';
@@ -30,6 +31,7 @@ function TableHandler(sourceTable, destinationTable, labelCaption, labelId, form
     };
 
     var destinationTableItemSelector = ItemSelector.create();
+    var destinationHandle = null;
 
     tableHandler.toggleSelection = function () {
         $('input[type="checkbox"]', sourceTable).each(function (index, checkboxNode) {
@@ -67,50 +69,36 @@ function TableHandler(sourceTable, destinationTable, labelCaption, labelId, form
         if (destinationTableItemSelector.isItemSelected(idItem)) {
             return;
         }
-        destinationTableItemSelector.addItemToSelection(idItem);
 
-        destinationTable
-            .DataTable()
-            .row.add([
-                idItem,
-                decodeURIComponent((email + '').replace(/\+/g, '%20')),
-                decodeURIComponent((firstName + '').replace(/\+/g, '%20')),
-                decodeURIComponent((lastName + '').replace(/\+/g, '%20')),
-                '<div><a data-id="' + idItem + '" href="#" class="btn btn-xs remove-item">Remove</a></div>',
-            ])
-            .draw();
+        destinationTableItemSelector.addItemToSelection(idItem, [
+            idItem,
+            decodeURIComponent((email + '').replace(/\+/g, '%20')),
+            decodeURIComponent((firstName + '').replace(/\+/g, '%20')),
+            decodeURIComponent((lastName + '').replace(/\+/g, '%20')),
+            '<div><a data-id="' + idItem + '" href="#" class="btn btn-xs remove-item">Remove</a></div>',
+        ]);
 
-        $('.remove-item').off('click');
-        $('.remove-item').on('click', onRemoveCallback);
-
+        tableHandler.renderSelection();
         tableHandler.updateSelectedItemsLabelCount();
+    };
+
+    tableHandler.renderSelection = function () {
+        if (!destinationHandle) {
+            return;
+        }
+
+        destinationHandle.raw().clear().rows.add(destinationTableItemSelector.getRows()).draw();
     };
 
     tableHandler.removeSelectedItem = function (idItem) {
         idItem = parseInt(idItem, 10);
 
-        destinationTable
-            .DataTable()
-            .rows()
-            .every(function (rowIndex, tableLoop, rowLoop) {
-                if (!this.data()) {
-                    return;
-                }
+        if (destinationTableItemSelector.isItemSelected(idItem)) {
+            destinationTableItemSelector.removeItemFromSelection(idItem);
+            tableHandler.renderSelection();
+            tableHandler.unCheckCheckbox($('input[value="' + idItem + '"]', sourceTable));
+        }
 
-                var rowItemId = parseInt(this.data()[0], 10);
-                if (idItem !== rowItemId) {
-                    return;
-                }
-
-                destinationTableItemSelector.removeItemFromSelection(idItem);
-
-                this.remove();
-
-                var $checkbox = $('input[value="' + idItem + '"]', sourceTable);
-                tableHandler.unCheckCheckbox($checkbox);
-            });
-
-        destinationTable.DataTable().draw();
         tableHandler.updateSelectedItemsLabelCount();
     };
 
@@ -182,6 +170,18 @@ function TableHandler(sourceTable, destinationTable, labelCaption, labelId, form
         var checkedState = tableHandler.getInitialCheckboxCheckedState() !== CHECKBOX_CHECKED_STATE_UN_CHECKED;
         $checkbox.prop('checked', checkedState);
     };
+
+    if (destinationTable.length) {
+        destinationTable.on('click', '.remove-item', onRemoveCallback);
+
+        tableAccess.requestTable(destinationTable[0], function (handle) {
+            destinationHandle = handle;
+
+            handle.created().then(function () {
+                tableHandler.renderSelection();
+            });
+        });
+    }
 
     return tableHandler;
 }
