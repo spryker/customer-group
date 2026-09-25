@@ -18,3 +18,5 @@ Save,Save
 "Customer groups","Customer Groups"
 "Add a customer group","Add a customer group"
 Select,Select
+message.customer_group.validation.name_taken,"The customer group name is already taken."
+message.customer_group.validation.customer_not_found,"The customer was not found."

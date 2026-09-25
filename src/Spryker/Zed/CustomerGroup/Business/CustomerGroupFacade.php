@@ -7,7 +7,12 @@
 
 namespace Spryker\Zed\CustomerGroup\Business;
 
+use Generated\Shared\Transfer\CustomerCollectionTransfer;
+use Generated\Shared\Transfer\CustomerGroupCollectionRequestTransfer;
+use Generated\Shared\Transfer\CustomerGroupCollectionResponseTransfer;
 use Generated\Shared\Transfer\CustomerGroupCollectionTransfer;
+use Generated\Shared\Transfer\CustomerGroupCriteriaTransfer;
+use Generated\Shared\Transfer\CustomerGroupCustomerCriteriaTransfer;
 use Generated\Shared\Transfer\CustomerGroupTransfer;
 use Generated\Shared\Transfer\CustomerTransfer;
 use Spryker\Zed\Kernel\Business\AbstractFacade;
@@ -142,5 +147,62 @@ class CustomerGroupFacade extends AbstractFacade implements CustomerGroupFacadeI
         $this->getFactory()
             ->createCustomerGroup()
             ->removeCustomerFromAllGroups($customerTransfer);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\CustomerGroupCriteriaTransfer $customerGroupCriteriaTransfer
+     *
+     * @return \Generated\Shared\Transfer\CustomerGroupCollectionTransfer
+     */
+    public function getCustomerGroupCollection(
+        CustomerGroupCriteriaTransfer $customerGroupCriteriaTransfer
+    ): CustomerGroupCollectionTransfer {
+        return $this->getRepository()->getCustomerGroupCollection($customerGroupCriteriaTransfer);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\CustomerGroupCustomerCriteriaTransfer $customerGroupCustomerCriteriaTransfer
+     *
+     * @return \Generated\Shared\Transfer\CustomerCollectionTransfer
+     */
+    public function getCustomerCollectionByCustomerGroupCriteria(
+        CustomerGroupCustomerCriteriaTransfer $customerGroupCustomerCriteriaTransfer
+    ): CustomerCollectionTransfer {
+        return $this->getRepository()
+            ->getCustomerCollectionByCustomerGroupCriteria($customerGroupCustomerCriteriaTransfer);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @api
+     */
+    public function createCustomerGroupCollection(
+        CustomerGroupCollectionRequestTransfer $customerGroupCollectionRequestTransfer
+    ): CustomerGroupCollectionResponseTransfer {
+        return $this->getFactory()
+            ->createCustomerGroupWriter()
+            ->createCustomerGroupCollection($customerGroupCollectionRequestTransfer);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @api
+     */
+    public function updateCustomerGroupCollection(
+        CustomerGroupCollectionRequestTransfer $customerGroupCollectionRequestTransfer
+    ): CustomerGroupCollectionResponseTransfer {
+        return $this->getFactory()
+            ->createCustomerGroupWriter()
+            ->updateCustomerGroupCollection($customerGroupCollectionRequestTransfer);
     }
 }

@@ -16,6 +16,7 @@ use Orm\Zed\CustomerGroup\Persistence\SpyCustomerGroup;
 use Orm\Zed\CustomerGroup\Persistence\SpyCustomerGroupToCustomer;
 use Propel\Runtime\Collection\ObjectCollection;
 use Spryker\Zed\CustomerGroup\Business\Exception\CustomerGroupNotFoundException;
+use Spryker\Zed\CustomerGroup\Persistence\CustomerGroupEntityManagerInterface;
 use Spryker\Zed\CustomerGroup\Persistence\CustomerGroupQueryContainerInterface;
 use Spryker\Zed\Kernel\Persistence\EntityManager\TransactionTrait;
 
@@ -28,9 +29,17 @@ class CustomerGroup implements CustomerGroupInterface
      */
     protected $queryContainer;
 
-    public function __construct(CustomerGroupQueryContainerInterface $queryContainer)
-    {
+    /**
+     * @var \Spryker\Zed\CustomerGroup\Persistence\CustomerGroupEntityManagerInterface|null
+     */
+    protected ?CustomerGroupEntityManagerInterface $entityManager;
+
+    public function __construct(
+        CustomerGroupQueryContainerInterface $queryContainer,
+        ?CustomerGroupEntityManagerInterface $entityManager = null
+    ) {
         $this->queryContainer = $queryContainer;
+        $this->entityManager = $entityManager;
     }
 
     /**
@@ -133,6 +142,16 @@ class CustomerGroup implements CustomerGroupInterface
             $customerGroupTransfer->getCustomerAssignment()->getIdsCustomerToAssign() :
             [];
 
+        if ($idsCustomerToAssign === []) {
+            return;
+        }
+
+        if ($this->entityManager !== null) {
+            $this->entityManager->createCustomerGroupToCustomerRelations($customerGroupEntity->getIdCustomerGroup(), $idsCustomerToAssign);
+
+            return;
+        }
+
         foreach ($idsCustomerToAssign as $idCustomerToAssign) {
             $customerGroupToCustomerEntity = new SpyCustomerGroupToCustomer();
             $customerGroupToCustomerEntity->setFkCustomerGroup($customerGroupEntity->getIdCustomerGroup());
@@ -193,6 +212,16 @@ class CustomerGroup implements CustomerGroupInterface
             $customerGroupTransfer->getCustomerAssignment()->getIdsCustomerToDeAssign() :
             [];
 
+        if ($idsCustomerToDeAssign === []) {
+            return;
+        }
+
+        if ($this->entityManager !== null) {
+            $this->entityManager->deleteCustomerGroupToCustomerRelations((int)$customerGroupTransfer->getIdCustomerGroup(), $idsCustomerToDeAssign);
+
+            return;
+        }
+
         foreach ($idsCustomerToDeAssign as $idCustomer) {
             $customerEntity = $this->queryContainer
                 ->queryCustomerGroupToCustomerByFkCustomerGroup($customerGroupTransfer->getIdCustomerGroup())
@@ -239,11 +268,14 @@ class CustomerGroup implements CustomerGroupInterface
         $customerGroupTransfers = $this->findCustomerGroupsByIdCustomer($customerTransfer->getIdCustomer());
 
         foreach ($customerGroupTransfers as $customerGroupTransfer) {
-            $customerGroupTransfer
-                ->getCustomerAssignment()
-                ->addIdCustomerToDeAssign(
+            $customerGroupToCustomerAssignmentTransfer = $customerGroupTransfer->getCustomerAssignment()
+                ?? new CustomerGroupToCustomerAssignmentTransfer();
+
+            $customerGroupTransfer->setCustomerAssignment(
+                $customerGroupToCustomerAssignmentTransfer->addIdCustomerToDeAssign(
                     $customerTransfer->getIdCustomer(),
-                );
+                ),
+            );
 
             $this->removeCustomersFromGroup($customerGroupTransfer);
         }

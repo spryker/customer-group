@@ -3,15 +3,82 @@
 
     <transfer name="CustomerGroup">
         <property name="idCustomerGroup" type="int"/>
+        <property name="uuid" type="string"/>
         <property name="name" type="string"/>
         <property name="description" type="string"/>
+        <property name="createdAt" type="string"/>
 
         <property name="customers" singular="customer" type="CustomerGroupToCustomer[]"/>
         <property name="customerAssignment" type="CustomerGroupToCustomerAssignment"/>
+        <property name="customerReferences" type="string[]" singular="customerReference"/>
+        <property name="hasAssignmentChange" type="bool"/>
+        <property name="isAssignmentReplacement" type="bool"/>
     </transfer>
 
     <transfer name="CustomerGroupCollection">
         <property name="groups" type="CustomerGroup[]" singular="group"/>
+        <property name="pagination" type="Pagination"/>
+    </transfer>
+
+    <transfer name="CustomerGroupCollectionRequest" strict="true">
+        <property name="customerGroups" type="CustomerGroup[]" singular="customerGroup"/>
+        <property name="isTransactional" type="bool"/>
+    </transfer>
+
+    <transfer name="CustomerGroupCollectionResponse" strict="true">
+        <property name="customerGroups" type="CustomerGroup[]" singular="customerGroup"/>
+        <property name="errors" type="Error[]" singular="error"/>
+    </transfer>
+
+    <transfer name="CustomerGroupResponse" strict="true">
+        <property name="isSuccessful" type="bool"/>
+        <property name="customerGroup" type="CustomerGroup"/>
+        <property name="errors" type="Error[]" singular="error"/>
+    </transfer>
+
+    <transfer name="Error">
+        <property name="message" type="string"/>
+        <property name="entityIdentifier" type="string"/>
+    </transfer>
+
+    <transfer name="CustomerGroupCriteria" strict="true">
+        <property name="customerGroupConditions" type="CustomerGroupConditions"/>
+        <property name="sortCollection" type="Sort[]" singular="sort"/>
+        <property name="pagination" type="Pagination"/>
+    </transfer>
+
+    <transfer name="CustomerGroupConditions" strict="true">
+        <property name="uuids" type="string[]" singular="uuid"/>
+        <property name="names" type="string[]" singular="name"/>
+        <property name="searchTerm" type="string"/>
+    </transfer>
+
+    <transfer name="CustomerGroupCustomerCriteria" strict="true">
+        <property name="customerGroupCustomerConditions" type="CustomerGroupCustomerConditions"/>
+        <property name="sortCollection" type="Sort[]" singular="sort"/>
+        <property name="pagination" type="Pagination"/>
+    </transfer>
+
+    <transfer name="CustomerGroupCustomerConditions" strict="true">
+        <property name="customerGroupIds" type="int[]" singular="idCustomerGroup"/>
+        <property name="customerReferences" type="string[]" singular="customerReference"/>
+        <property name="searchTerm" type="string"/>
+    </transfer>
+
+    <transfer name="Sort">
+        <property name="field" type="string"/>
+        <property name="isAscending" type="bool"/>
+    </transfer>
+
+    <transfer name="Pagination">
+        <property name="page" type="int"/>
+        <property name="maxPerPage" type="int"/>
+        <property name="nbResults" type="int"/>
+    </transfer>
+
+    <transfer name="CustomerCollection">
+        <property name="customers" type="Customer[]" singular="customer"/>
+        <property name="pagination" type="Pagination"/>
     </transfer>
 
     <transfer name="CustomerGroupToCustomer">
@@ -26,6 +93,10 @@
 
     <transfer name="Customer">
         <property name="idCustomer" type="int"/>
+        <property name="customerReference" type="string"/>
+        <property name="email" type="string"/>
+        <property name="firstName" type="string"/>
+        <property name="lastName" type="string"/>
     </transfer>
 
     <transfer name="TabsView">

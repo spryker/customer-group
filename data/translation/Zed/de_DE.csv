@@ -18,3 +18,5 @@ Save,Speichern
 "Customer groups",Kundengruppen
 "Add a customer group","Kundengruppe hinzufügen"
 Select,Auswählen
+message.customer_group.validation.name_taken,"Der Name der Kundengruppe ist bereits vergeben."
+message.customer_group.validation.customer_not_found,"Der Kunde wurde nicht gefunden."
