@@ -73,6 +73,21 @@ class CustomerGroupForm extends AbstractType
             ->addNameField($builder, $options)
             ->addDescriptionField($builder)
             ->addCustomerAssignmentSubForm($builder);
+
+        $this->executeCustomerGroupFormExpanderPlugins($builder);
+    }
+
+    /**
+     * @param \Symfony\Component\Form\FormBuilderInterface<string, \Symfony\Component\Form\FormBuilderInterface> $builder
+     */
+    protected function executeCustomerGroupFormExpanderPlugins(FormBuilderInterface $builder): void
+    {
+        /** @var \Generated\Shared\Transfer\CustomerGroupTransfer $customerGroupTransfer */
+        $customerGroupTransfer = $builder->getData();
+
+        foreach ($this->getFactory()->getCustomerGroupFormExpanderPlugins() as $customerGroupFormExpanderPlugin) {
+            $customerGroupFormExpanderPlugin->expand($builder, $customerGroupTransfer);
+        }
     }
 
     /**

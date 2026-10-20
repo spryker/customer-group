@@ -70,16 +70,16 @@ function TableHandler(sourceTable, destinationTable, labelCaption, labelId, form
             return;
         }
 
-        destinationTableItemSelector.addItemToSelection(idItem, [
-            idItem,
-            decodeURIComponent((email + '').replace(/\+/g, '%20')),
-            decodeURIComponent((firstName + '').replace(/\+/g, '%20')),
-            decodeURIComponent((lastName + '').replace(/\+/g, '%20')),
-            '<div><a data-id="' + idItem + '" href="#" class="btn btn-xs remove-item">Remove</a></div>',
-        ]);
+        destinationTableItemSelector.addItemToSelection(idItem, createRow(idItem, email, firstName, lastName));
 
         tableHandler.renderSelection();
         tableHandler.updateSelectedItemsLabelCount();
+    };
+
+    tableHandler.updateSelectedItem = function (idItem, email, firstName, lastName) {
+        idItem = parseInt(idItem, 10);
+
+        destinationTableItemSelector.addItemToSelection(idItem, createRow(idItem, email, firstName, lastName));
     };
 
     tableHandler.renderSelection = function () {
@@ -171,6 +171,15 @@ function TableHandler(sourceTable, destinationTable, labelCaption, labelId, form
         $checkbox.prop('checked', checkedState);
     };
 
+    // After a failed save the server renders the submitted IDs back into the field; the rows of the items get
+    // their data once the source table shows them.
+    String($(formFieldId).val() || '')
+        .split(',')
+        .filter(Boolean)
+        .forEach(function (idItem) {
+            tableHandler.addSelectedItem(idItem, '', '', '');
+        });
+
     if (destinationTable.length) {
         destinationTable.on('click', '.remove-item', onRemoveCallback);
 
@@ -184,6 +193,24 @@ function TableHandler(sourceTable, destinationTable, labelCaption, labelId, form
     }
 
     return tableHandler;
+}
+
+/**
+ * @param {number} idItem
+ * @param {string} email
+ * @param {string} firstName
+ * @param {string} lastName
+ *
+ * @return {Array}
+ */
+function createRow(idItem, email, firstName, lastName) {
+    return [
+        idItem,
+        decodeURIComponent((email + '').replace(/\+/g, '%20')),
+        decodeURIComponent((firstName + '').replace(/\+/g, '%20')),
+        decodeURIComponent((lastName + '').replace(/\+/g, '%20')),
+        '<div><a data-id="' + idItem + '" href="#" class="btn-xs remove-item">Remove</a></div>',
+    ];
 }
 
 module.exports = {

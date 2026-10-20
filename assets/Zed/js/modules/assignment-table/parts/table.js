@@ -59,18 +59,25 @@ function create(
     tableAccess.requestTable($sourceTable[0], function (handle) {
         handle.on('draw', function () {
             var selector = tableHandler.getSelector();
+            var hasSelectedItems = false;
 
-            handle
-                .raw()
-                .rows()
-                .data()
-                .each(function (item) {
-                    var idItem = parseInt(item[1], 10);
+            $sourceTable.find(checkboxSelector).each(function () {
+                var $checkbox = $(this);
 
-                    if (selector.isItemSelected(idItem)) {
-                        tableHandler.checkCheckbox($('input[value="' + idItem + '"]', $sourceTable));
-                    }
-                });
+                if (!selector.isItemSelected(parseInt($checkbox.val(), 10))) {
+                    return;
+                }
+
+                var info = $.parseJSON($checkbox.attr('data-info'));
+
+                tableHandler.checkCheckbox($checkbox);
+                tableHandler.updateSelectedItem(info.id, info.email, info.firstName, info.lastName);
+                hasSelectedItems = true;
+            });
+
+            if (hasSelectedItems) {
+                tableHandler.renderSelection();
+            }
         });
     });
 

@@ -7,12 +7,24 @@
 
 namespace Spryker\Zed\CustomerGroup\Communication\Tabs;
 
+use ArrayObject;
 use Generated\Shared\Transfer\TabItemTransfer;
 use Generated\Shared\Transfer\TabsViewTransfer;
+use Spryker\Zed\CustomerGroup\Communication\Sorter\SectionSorterInterface;
+use Spryker\Zed\CustomerGroup\CustomerGroupConfig;
 use Spryker\Zed\Gui\Communication\Tabs\AbstractTabs;
 
 class CustomerGroupFormTabs extends AbstractTabs
 {
+    /**
+     * @param list<\Spryker\Zed\CustomerGroupExtension\Dependency\Plugin\CustomerGroupFormTabExpanderPluginInterface> $customerGroupFormTabExpanderPlugins
+     */
+    public function __construct(
+        protected SectionSorterInterface $sectionSorter,
+        protected array $customerGroupFormTabExpanderPlugins = []
+    ) {
+    }
+
     /**
      * @param \Generated\Shared\Transfer\TabsViewTransfer $tabsViewTransfer
      *
@@ -22,12 +34,32 @@ class CustomerGroupFormTabs extends AbstractTabs
     {
         $this
             ->addGeneralInformationTab($tabsViewTransfer)
-            ->addCustomerAssignmentTab($tabsViewTransfer)
-            ->setFooter($tabsViewTransfer);
+            ->addCustomerAssignmentTab($tabsViewTransfer);
+
+        $tabsViewTransfer = $this->executeCustomerGroupFormTabExpanderPlugins($tabsViewTransfer);
+        $tabsViewTransfer = $this->sortTabsByFormTabOrder($tabsViewTransfer);
+
+        $this->setFooter($tabsViewTransfer);
 
         $tabsViewTransfer->setIsNavigable(true);
 
         return $tabsViewTransfer;
+    }
+
+    protected function executeCustomerGroupFormTabExpanderPlugins(TabsViewTransfer $tabsViewTransfer): TabsViewTransfer
+    {
+        foreach ($this->customerGroupFormTabExpanderPlugins as $customerGroupFormTabExpanderPlugin) {
+            $tabsViewTransfer = $customerGroupFormTabExpanderPlugin->expand($tabsViewTransfer);
+        }
+
+        return $tabsViewTransfer;
+    }
+
+    protected function sortTabsByFormTabOrder(TabsViewTransfer $tabsViewTransfer): TabsViewTransfer
+    {
+        $sortedTabItemTransfers = $this->sectionSorter->sortTabsByFormTabOrder($tabsViewTransfer->getTabs()->getArrayCopy());
+
+        return $tabsViewTransfer->setTabs(new ArrayObject($sortedTabItemTransfers));
     }
 
     /**
@@ -39,7 +71,7 @@ class CustomerGroupFormTabs extends AbstractTabs
     {
         $tabItemTransfer = new TabItemTransfer();
         $tabItemTransfer
-            ->setName('general')
+            ->setName(CustomerGroupConfig::FORM_TAB_NAME_GENERAL)
             ->setTitle('General Information')
             ->setTemplate('@CustomerGroup/_partials/general-information.twig');
 
@@ -57,7 +89,7 @@ class CustomerGroupFormTabs extends AbstractTabs
     {
         $tabItemTransfer = new TabItemTransfer();
         $tabItemTransfer
-            ->setName('customer-assignment')
+            ->setName(CustomerGroupConfig::FORM_TAB_NAME_CUSTOMER_ASSIGNMENT)
             ->setTitle('Customers')
             ->setTemplate('@CustomerGroup/_partials/customer-assignment.twig');
 

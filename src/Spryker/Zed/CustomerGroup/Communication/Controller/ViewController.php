@@ -27,7 +27,7 @@ class ViewController extends AbstractController
     /**
      * @param \Symfony\Component\HttpFoundation\Request $request
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function indexAction(Request $request)
     {
@@ -44,11 +44,15 @@ class ViewController extends AbstractController
         $customerTable = $this->getFactory()
             ->createCustomerTable($customerGroupTransfer);
 
-        return $this->viewResponse([
+        $viewData = [
             'customerGroup' => $customerGroupArray,
             'idCustomerGroup' => $idCustomerGroup,
             'customerTable' => $customerTable->render(),
-        ]);
+        ];
+
+        return $this->viewResponse(
+            $this->getFactory()->createCustomerGroupViewExpander()->expandViewData($viewData, $customerGroupTransfer),
+        );
     }
 
     /**

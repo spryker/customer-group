@@ -18,6 +18,7 @@ use Spryker\Zed\CustomerGroup\Business\Validator\CustomerGroupValidator;
 use Spryker\Zed\CustomerGroup\Business\Validator\CustomerGroupValidatorInterface;
 use Spryker\Zed\CustomerGroup\Business\Writer\CustomerGroupWriter;
 use Spryker\Zed\CustomerGroup\Business\Writer\CustomerGroupWriterInterface;
+use Spryker\Zed\CustomerGroup\CustomerGroupDependencyProvider;
 use Spryker\Zed\Kernel\Business\AbstractBusinessFactory;
 
 /**
@@ -33,7 +34,19 @@ class CustomerGroupBusinessFactory extends AbstractBusinessFactory
      */
     public function createCustomerGroup()
     {
-        return new CustomerGroup($this->getQueryContainer(), $this->getEntityManager());
+        return new CustomerGroup(
+            $this->getQueryContainer(),
+            $this->getEntityManager(),
+            $this->getCustomerGroupPostSavePlugins(),
+        );
+    }
+
+    /**
+     * @return list<\Spryker\Zed\CustomerGroupExtension\Dependency\Plugin\CustomerGroupPostSavePluginInterface>
+     */
+    public function getCustomerGroupPostSavePlugins(): array
+    {
+        return $this->getProvidedDependency(CustomerGroupDependencyProvider::PLUGINS_CUSTOMER_GROUP_POST_SAVE);
     }
 
     public function createCustomerGroupWriter(): CustomerGroupWriterInterface

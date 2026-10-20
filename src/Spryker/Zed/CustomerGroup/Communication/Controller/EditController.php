@@ -54,13 +54,14 @@ class EditController extends AbstractController
             $this->addSuccessMessage(static::MESSAGE_CUSTOMER_GROUP_UPDATE_SUCCESS);
 
             return $this->redirectResponse(
-                sprintf('/customer-group/view?%s=%d', static::PARAM_ID_CUSTOMER_GROUP, $idCustomerGroup),
+                $this->getFactory()->createUpdateRedirectUrlResolver()->resolveUpdateRedirectUrl($idCustomerGroup),
             );
         }
 
         return $this->viewResponse([
             'form' => $form->createView(),
             'idCustomerGroup' => $idCustomerGroup,
+            'isRedirectToEditPageAfterUpdateEnabled' => $this->getFactory()->getConfig()->isRedirectToEditPageAfterUpdateEnabled(),
             'customerGroupFormTabs' => $this->getFactory()->createCustomerGroupFormTabs()->createView(),
             'availableCustomerTable' => $this->getFactory()
                 ->createAvailableCustomerTable($idCustomerGroup)

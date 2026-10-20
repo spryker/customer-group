@@ -43,11 +43,7 @@ class CustomerGroupWriter implements CustomerGroupWriterInterface
         return $this->getTransactionHandler()->handleTransaction(
             fn (): CustomerGroupCollectionResponseTransfer => $this->persistCollection(
                 $customerGroupCollectionRequestTransfer,
-                function (CustomerGroupTransfer $customerGroupTransfer): CustomerGroupTransfer {
-                    $this->customerGroupModel->update($customerGroupTransfer);
-
-                    return $customerGroupTransfer;
-                },
+                fn (CustomerGroupTransfer $customerGroupTransfer): CustomerGroupTransfer => $this->customerGroupModel->update($customerGroupTransfer),
             ),
         );
     }

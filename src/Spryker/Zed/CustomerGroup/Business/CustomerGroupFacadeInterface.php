@@ -22,6 +22,7 @@ interface CustomerGroupFacadeInterface
      * Specification:
      *  - Adds new group
      *  - If list of customers is not empty, assigns customers, specified in customers array to group
+     *  - Executes the stack of {@link \Spryker\Zed\CustomerGroupExtension\Dependency\Plugin\CustomerGroupPostSavePluginInterface} plugins inside the same transaction, after the group ID is set.
      *
      * @api
      *
@@ -54,6 +55,9 @@ interface CustomerGroupFacadeInterface
      *  - Throws CustomerGroupNotFoundException if not found
      *  - Entity is modified with data from CustomerGroupTransfer and saved
      *  - All assigned customers are deleted, customers specified in getCustomers are assigned to the group
+     *  - Executes the stack of {@link \Spryker\Zed\CustomerGroupExtension\Dependency\Plugin\CustomerGroupPostSavePluginInterface} plugins inside the same transaction.
+     *  - Returns nothing, so the caller sees only the changes the plugins make to the transfer it passes,
+     *    {@link static::updateCustomerGroupCollection()} returns the transfer the plugins return.
      *
      * @api
      *
@@ -184,7 +188,7 @@ interface CustomerGroupFacadeInterface
      * - Persists valid items and skips invalid ones when `CustomerGroupCollectionRequestTransfer.isTransactional` is `false`.
      * - Resolves `CustomerGroupTransfer.customerReferences` (with `hasAssignmentChange` set) into `customerAssignment` ids before writing.
      * - Delegates the write itself to the same logic as {@link static::add()}.
-     * - Returns the persisted items alongside any validation errors.
+     * - Returns the persisted items, as the `CustomerGroupPostSavePluginInterface` plugins return them, alongside any validation errors.
      * - Populates `CustomerGroupTransfer.uuid` on the persisted items only while the
      *   `spy_customer_group.uuid` column is installed, as the uuid behavior that generates it comes
      *   with that optional schema extension; the property stays null otherwise.
@@ -208,7 +212,7 @@ interface CustomerGroupFacadeInterface
      * - Lets callers express the assignment in customer references instead by setting `customerReferences` plus `hasAssignmentChange`, and `isAssignmentReplacement` when the list is the complete new member set.
      * - Reduces such an assignment change to a delta against the stored members, so re-assigning an existing member is a no-op rather than a unique-constraint violation.
      * - Delegates the write itself to the same logic as {@link static::update()}.
-     * - Returns all items from the request alongside any validation errors.
+     * - Returns the persisted items, as the `CustomerGroupPostSavePluginInterface` plugins return them, alongside any validation errors.
      *
      * @api
      */

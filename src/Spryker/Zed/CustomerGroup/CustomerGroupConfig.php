@@ -23,6 +23,10 @@ class CustomerGroupConfig extends AbstractBundleConfig
 
     public const string SORT_FIELD_LAST_NAME = 'lastName';
 
+    public const string FORM_TAB_NAME_GENERAL = 'general';
+
+    public const string FORM_TAB_NAME_CUSTOMER_ASSIGNMENT = 'customer-assignment';
+
     /**
      * Specification:
      * - Returns the sortable fields of the customer group collection, mapping each publicly accepted
@@ -57,6 +61,39 @@ class CustomerGroupConfig extends AbstractBundleConfig
             static::SORT_FIELD_EMAIL => SpyCustomerTableMap::COL_EMAIL,
             static::SORT_FIELD_FIRST_NAME => SpyCustomerTableMap::COL_FIRST_NAME,
             static::SORT_FIELD_LAST_NAME => SpyCustomerTableMap::COL_LAST_NAME,
+        ];
+    }
+
+    /**
+     * Specification:
+     * - Defines where a successful save on the Back Office customer group Edit page redirects.
+     * - Returns `true` to redirect back to the Edit page, opening the tab that was open when the form was submitted.
+     * - Returns `false` to redirect to the customer group View page.
+     *
+     * @api
+     */
+    public function isRedirectToEditPageAfterUpdateEnabled(): bool
+    {
+        return false;
+    }
+
+    /**
+     * Specification:
+     * - Returns the names of the tabs of the Back Office customer group Add and Edit pages, in the order they are rendered.
+     * - The built-in tabs are named `FORM_TAB_NAME_GENERAL` and `FORM_TAB_NAME_CUSTOMER_ASSIGNMENT` a tab added by a `CustomerGroupFormTabExpanderPluginInterface` plugin has the name the plugin gives it.
+     * - Tabs that are not listed are rendered after the listed ones, in the order they are added: the built-in tabs, then the tabs of the plugins.
+     * - The first rendered tab opens when the page loads.
+     * - Returns the built-in tabs by default, General Information then Customers, so the tabs of the plugins follow them.
+     *
+     * @api
+     *
+     * @return list<string>
+     */
+    public function getFormTabOrder(): array
+    {
+        return [
+            static::FORM_TAB_NAME_GENERAL,
+            static::FORM_TAB_NAME_CUSTOMER_ASSIGNMENT,
         ];
     }
 }

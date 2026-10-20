@@ -12,7 +12,9 @@
 {% endblock %}
 
 {% block content %}
-    {{ form_start(form) }}
+    {% set formAttributes = isRedirectToEditPageAfterUpdateEnabled is defined and isRedirectToEditPageAfterUpdateEnabled ? {'data-keeps-active-tab': 'true'} : {} %}
+
+    {{ form_start(form, {'attr': formAttributes}) }}
 
     {{ tabs(
     customerGroupFormTabs,

@@ -29,7 +29,7 @@ interface CustomerGroupInterface
     /**
      * @param \Generated\Shared\Transfer\CustomerGroupTransfer $customerGroupTransfer
      *
-     * @return void
+     * @return \Generated\Shared\Transfer\CustomerGroupTransfer
      */
     public function update(CustomerGroupTransfer $customerGroupTransfer);
 

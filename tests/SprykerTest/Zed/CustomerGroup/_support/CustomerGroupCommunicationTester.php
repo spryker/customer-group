@@ -8,6 +8,8 @@
 namespace SprykerTest\Zed\CustomerGroup;
 
 use Codeception\Actor;
+use Spryker\Shared\Kernel\Container\GlobalContainer;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * @method void wantToTest($text)
@@ -26,4 +28,17 @@ use Codeception\Actor;
 class CustomerGroupCommunicationTester extends Actor
 {
     use _generated\CustomerGroupCommunicationTesterActions;
+
+    /**
+     * @uses \Spryker\Zed\Gui\Communication\Table\AbstractTable::getRequest()
+     */
+    protected const string SERVICE_REQUEST = 'request';
+
+    public function setTableRequest(): void
+    {
+        $container = $this->getContainer();
+        $container->set(static::SERVICE_REQUEST, new Request());
+
+        GlobalContainer::setContainer($container);
+    }
 }

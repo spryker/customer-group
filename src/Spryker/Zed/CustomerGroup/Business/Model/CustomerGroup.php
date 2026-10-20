@@ -25,21 +25,13 @@ class CustomerGroup implements CustomerGroupInterface
     use TransactionTrait;
 
     /**
-     * @var \Spryker\Zed\CustomerGroup\Persistence\CustomerGroupQueryContainerInterface
+     * @param list<\Spryker\Zed\CustomerGroupExtension\Dependency\Plugin\CustomerGroupPostSavePluginInterface> $customerGroupPostSavePlugins
      */
-    protected $queryContainer;
-
-    /**
-     * @var \Spryker\Zed\CustomerGroup\Persistence\CustomerGroupEntityManagerInterface|null
-     */
-    protected ?CustomerGroupEntityManagerInterface $entityManager;
-
     public function __construct(
-        CustomerGroupQueryContainerInterface $queryContainer,
-        ?CustomerGroupEntityManagerInterface $entityManager = null
+        protected CustomerGroupQueryContainerInterface $queryContainer,
+        protected ?CustomerGroupEntityManagerInterface $entityManager = null,
+        protected array $customerGroupPostSavePlugins = []
     ) {
-        $this->queryContainer = $queryContainer;
-        $this->entityManager = $entityManager;
     }
 
     /**
@@ -95,12 +87,12 @@ class CustomerGroup implements CustomerGroupInterface
     /**
      * @param \Generated\Shared\Transfer\CustomerGroupTransfer $customerGroupTransfer
      *
-     * @return void
+     * @return \Generated\Shared\Transfer\CustomerGroupTransfer
      */
     public function update(CustomerGroupTransfer $customerGroupTransfer)
     {
-        $this->getTransactionHandler()->handleTransaction(function () use ($customerGroupTransfer): void {
-            $this->executeUpdateTransaction($customerGroupTransfer);
+        return $this->getTransactionHandler()->handleTransaction(function () use ($customerGroupTransfer): CustomerGroupTransfer {
+            return $this->executeUpdateTransaction($customerGroupTransfer);
         });
     }
 
@@ -114,10 +106,10 @@ class CustomerGroup implements CustomerGroupInterface
 
         $this->saveCustomers($customerGroupTransfer, $customerGroupEntity);
 
-        return $customerGroupTransfer;
+        return $this->executeCustomerGroupPostSavePlugins($customerGroupTransfer);
     }
 
-    protected function executeUpdateTransaction(CustomerGroupTransfer $customerGroupTransfer): void
+    protected function executeUpdateTransaction(CustomerGroupTransfer $customerGroupTransfer): CustomerGroupTransfer
     {
         $customerGroupEntity = $this->getCustomerGroup($customerGroupTransfer);
         $customerGroupEntity->fromArray($customerGroupTransfer->toArray());
@@ -128,6 +120,17 @@ class CustomerGroup implements CustomerGroupInterface
 
         $this->removeCustomersFromGroup($customerGroupTransfer);
         $this->saveCustomers($customerGroupTransfer, $customerGroupEntity);
+
+        return $this->executeCustomerGroupPostSavePlugins($customerGroupTransfer);
+    }
+
+    protected function executeCustomerGroupPostSavePlugins(CustomerGroupTransfer $customerGroupTransfer): CustomerGroupTransfer
+    {
+        foreach ($this->customerGroupPostSavePlugins as $customerGroupPostSavePlugin) {
+            $customerGroupTransfer = $customerGroupPostSavePlugin->postSave($customerGroupTransfer);
+        }
+
+        return $customerGroupTransfer;
     }
 
     /**

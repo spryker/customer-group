@@ -6,3 +6,4 @@
 'use strict';
 
 require('./modules/assignment-table/main');
+require('./modules/keep-active-tab/main');

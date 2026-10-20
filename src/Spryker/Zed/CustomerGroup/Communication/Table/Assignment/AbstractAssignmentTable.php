@@ -97,11 +97,11 @@ abstract class AbstractAssignmentTable extends AbstractTable
     protected function configureHeader(TableConfiguration $config)
     {
         $config->setHeader([
-            static::COL_SELECT_CHECKBOX => 'Select',
             static::COL_CUSTOMER_ID => 'ID',
             static::COL_CUSTOMER_EMAIL => 'Email',
             static::COL_CUSTOMER_FIRST_NAME => 'First Name',
             static::COL_CUSTOMER_LAST_NAME => 'Last Name',
+            static::COL_SELECT_CHECKBOX => 'Select',
         ]);
     }
 
@@ -175,11 +175,11 @@ abstract class AbstractAssignmentTable extends AbstractTable
     protected function getRow(SpyCustomer $customerEntity)
     {
         return [
-            static::COL_SELECT_CHECKBOX => $this->getSelectCheckboxColumn($customerEntity),
             static::COL_CUSTOMER_ID => $customerEntity->getIdCustomer(),
             static::COL_CUSTOMER_EMAIL => $customerEntity->getEmail(),
             static::COL_CUSTOMER_FIRST_NAME => $customerEntity->getFirstName(),
             static::COL_CUSTOMER_LAST_NAME => $customerEntity->getLastName(),
+            static::COL_SELECT_CHECKBOX => $this->getSelectCheckboxColumn($customerEntity),
         ];
     }
 

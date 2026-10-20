@@ -32,11 +32,7 @@ function initialize() {
         onRemove,
     );
 
-    tableHandler.getInitialCheckboxCheckedState = function () {
-        return ItemTable.CHECKBOX_CHECKED_STATE_CHECKED;
-    };
-
-    $(buttonSelectAllSelector).on('click', tableHandler.deSelectAll);
+    $(buttonSelectAllSelector).on('click', tableHandler.selectAll);
 }
 
 /**

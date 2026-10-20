@@ -8,8 +8,14 @@
 namespace Spryker\Zed\CustomerGroup\Communication;
 
 use Generated\Shared\Transfer\CustomerGroupTransfer;
+use Spryker\Zed\CustomerGroup\Communication\Expander\CustomerGroupViewExpander;
+use Spryker\Zed\CustomerGroup\Communication\Expander\CustomerGroupViewExpanderInterface;
 use Spryker\Zed\CustomerGroup\Communication\Form\CustomerGroupForm;
 use Spryker\Zed\CustomerGroup\Communication\Form\DataProvider\CustomerGroupFormDataProvider;
+use Spryker\Zed\CustomerGroup\Communication\Resolver\UpdateRedirectUrlResolver;
+use Spryker\Zed\CustomerGroup\Communication\Resolver\UpdateRedirectUrlResolverInterface;
+use Spryker\Zed\CustomerGroup\Communication\Sorter\SectionSorter;
+use Spryker\Zed\CustomerGroup\Communication\Sorter\SectionSorterInterface;
 use Spryker\Zed\CustomerGroup\Communication\Table\Assignment\AssignedCustomerTable;
 use Spryker\Zed\CustomerGroup\Communication\Table\Assignment\AssignmentCustomerQueryBuilder;
 use Spryker\Zed\CustomerGroup\Communication\Table\Assignment\AvailableCustomerTable;
@@ -110,7 +116,46 @@ class CustomerGroupCommunicationFactory extends AbstractCommunicationFactory
      */
     public function createCustomerGroupFormTabs()
     {
-        return new CustomerGroupFormTabs();
+        return new CustomerGroupFormTabs($this->createSectionSorter(), $this->getCustomerGroupFormTabExpanderPlugins());
+    }
+
+    /**
+     * @return list<\Spryker\Zed\CustomerGroupExtension\Dependency\Plugin\CustomerGroupFormTabExpanderPluginInterface>
+     */
+    public function getCustomerGroupFormTabExpanderPlugins(): array
+    {
+        return $this->getProvidedDependency(CustomerGroupDependencyProvider::PLUGINS_CUSTOMER_GROUP_FORM_TAB_EXPANDER);
+    }
+
+    /**
+     * @return list<\Spryker\Zed\CustomerGroupExtension\Dependency\Plugin\CustomerGroupFormExpanderPluginInterface>
+     */
+    public function getCustomerGroupFormExpanderPlugins(): array
+    {
+        return $this->getProvidedDependency(CustomerGroupDependencyProvider::PLUGINS_CUSTOMER_GROUP_FORM_EXPANDER);
+    }
+
+    public function createCustomerGroupViewExpander(): CustomerGroupViewExpanderInterface
+    {
+        return new CustomerGroupViewExpander($this->getCustomerGroupViewExpanderPlugins(), $this->createSectionSorter());
+    }
+
+    public function createSectionSorter(): SectionSorterInterface
+    {
+        return new SectionSorter($this->getConfig());
+    }
+
+    /**
+     * @return list<\Spryker\Zed\CustomerGroupExtension\Dependency\Plugin\CustomerGroupViewExpanderPluginInterface>
+     */
+    public function getCustomerGroupViewExpanderPlugins(): array
+    {
+        return $this->getProvidedDependency(CustomerGroupDependencyProvider::PLUGINS_CUSTOMER_GROUP_VIEW_EXPANDER);
+    }
+
+    public function createUpdateRedirectUrlResolver(): UpdateRedirectUrlResolverInterface
+    {
+        return new UpdateRedirectUrlResolver($this->getConfig());
     }
 
     /**

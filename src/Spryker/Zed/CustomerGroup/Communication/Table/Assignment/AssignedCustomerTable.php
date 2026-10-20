@@ -27,6 +27,6 @@ class AssignedCustomerTable extends AbstractAssignmentTable
      */
     protected function getCheckboxCheckedAttribute()
     {
-        return 'checked="checked"';
+        return '';
     }
 }

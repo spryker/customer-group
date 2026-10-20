@@ -9,6 +9,7 @@ namespace SprykerTest\Zed\CustomerGroup\Helper;
 
 use Codeception\Module;
 use Generated\Shared\DataBuilder\CustomerGroupBuilder;
+use Generated\Shared\Transfer\CustomerGroupTransfer;
 use Orm\Zed\CustomerGroup\Persistence\SpyCustomerGroupQuery;
 use Spryker\Zed\CustomerGroup\Business\CustomerGroupFacadeInterface;
 use SprykerTest\Shared\Testify\Helper\DataCleanupHelperTrait;
@@ -20,11 +21,9 @@ class CustomerGroupHelper extends Module
     use LocatorHelperTrait;
 
     /**
-     * @param array $seed
-     *
-     * @return \Generated\Shared\Transfer\CustomerGroupTransfer|\Spryker\Shared\Kernel\Transfer\AbstractTransfer
+     * @param array<string, mixed> $seed
      */
-    public function haveCustomerGroup(array $seed = [])
+    public function haveCustomerGroup(array $seed = []): CustomerGroupTransfer
     {
         $customerGroupTransfer = (new CustomerGroupBuilder($seed))->build();
 
@@ -32,7 +31,7 @@ class CustomerGroupHelper extends Module
         $customerGroupTransfer = $customerGroupFacade->add($customerGroupTransfer);
 
         $this->getDataCleanupHelper()->_addCleanup(function () use ($customerGroupTransfer): void {
-            $this->cleanupCustomerGroup($customerGroupTransfer->getIdCustomerGroup());
+            $this->cleanupCustomerGroup($customerGroupTransfer->getIdCustomerGroupOrFail());
         });
 
         return $customerGroupTransfer;

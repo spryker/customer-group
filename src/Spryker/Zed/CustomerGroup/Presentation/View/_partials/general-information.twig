@@ -1,0 +1,13 @@
+{% embed '@Gui/Partials/widget.twig' with { widget_title: 'General Information' } %}
+    {% block widget_content %}
+        <div class="row">
+            <div class="col-2"><strong>{{ 'Name' | trans }}</strong></div>
+            <div class="col-10" data-qa="customer-group-name">{{ customerGroup.name }}</div>
+        </div>
+        <div class="hr-line-dashed"></div>
+        <div class="row">
+            <div class="col-2"><strong>{{ 'Description' | trans }}</strong></div>
+            <div class="col-10" data-qa="customer-group-description">{{ customerGroup.description }}</div>
+        </div>
+    {% endblock %}
+{% endembed %}

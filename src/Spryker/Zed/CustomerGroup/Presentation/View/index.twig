@@ -12,28 +12,15 @@
 
 {% block content %}
 
-    {% embed '@Gui/Partials/widget.twig' %}
-
-        {% block widget_content %}
-
-    <div>
-        <h1>{{ customerGroup.name }}</h1>
-
-        <table class="table">
-            <thead></thead>
-            <tbody>
-            <tr>
-                <th>{{ 'Description' | trans }}</th>
-                <td>{{ customerGroup.description }}</td>
-            </tr>
-            </tbody>
-        </table>
-
-        {{ customerTable | raw }}
-    </div>
-
-        {% endblock %}
-
-    {% endembed %}
+    {% if blocks is defined %}
+        {% for blockName, block in blocks %}
+            <div data-qa="customer-group-view-block-{{ blockName }}">
+                {{ include(block.templatePath, block.templateData) }}
+            </div>
+        {% endfor %}
+    {% else %}
+        {{ include('@CustomerGroup/View/_partials/general-information.twig') }}
+        {{ include('@CustomerGroup/View/_partials/customers.twig') }}
+    {% endif %}
 
 {% endblock %}

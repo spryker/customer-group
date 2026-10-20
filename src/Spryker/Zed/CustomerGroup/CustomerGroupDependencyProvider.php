@@ -38,6 +38,14 @@ class CustomerGroupDependencyProvider extends AbstractBundleDependencyProvider
      */
     public const SERVICE_UTIL_SANITIZE = 'SERVICE_UTIL_SANITIZE';
 
+    public const string PLUGINS_CUSTOMER_GROUP_POST_SAVE = 'PLUGINS_CUSTOMER_GROUP_POST_SAVE';
+
+    public const string PLUGINS_CUSTOMER_GROUP_FORM_TAB_EXPANDER = 'PLUGINS_CUSTOMER_GROUP_FORM_TAB_EXPANDER';
+
+    public const string PLUGINS_CUSTOMER_GROUP_FORM_EXPANDER = 'PLUGINS_CUSTOMER_GROUP_FORM_EXPANDER';
+
+    public const string PLUGINS_CUSTOMER_GROUP_VIEW_EXPANDER = 'PLUGINS_CUSTOMER_GROUP_VIEW_EXPANDER';
+
     /**
      * @param \Spryker\Zed\Kernel\Container $container
      *
@@ -45,6 +53,10 @@ class CustomerGroupDependencyProvider extends AbstractBundleDependencyProvider
      */
     public function provideBusinessLayerDependencies(Container $container)
     {
+        $container = parent::provideBusinessLayerDependencies($container);
+
+        $container = $this->addCustomerGroupPostSavePlugins($container);
+
         return $container;
     }
 
@@ -55,10 +67,15 @@ class CustomerGroupDependencyProvider extends AbstractBundleDependencyProvider
      */
     public function provideCommunicationLayerDependencies(Container $container)
     {
+        $container = parent::provideCommunicationLayerDependencies($container);
+
         $container = $this->addDataFormatterService($container);
         $container = $this->addCustomerQueryContainer($container);
         $container = $this->addUtilEncodingService($container);
         $container = $this->addUtilSanitizeService($container);
+        $container = $this->addCustomerGroupFormTabExpanderPlugins($container);
+        $container = $this->addCustomerGroupFormExpanderPlugins($container);
+        $container = $this->addCustomerGroupViewExpanderPlugins($container);
 
         return $container;
     }
@@ -114,5 +131,73 @@ class CustomerGroupDependencyProvider extends AbstractBundleDependencyProvider
         });
 
         return $container;
+    }
+
+    protected function addCustomerGroupPostSavePlugins(Container $container): Container
+    {
+        $container->set(static::PLUGINS_CUSTOMER_GROUP_POST_SAVE, function (): array {
+            return $this->getCustomerGroupPostSavePlugins();
+        });
+
+        return $container;
+    }
+
+    protected function addCustomerGroupFormTabExpanderPlugins(Container $container): Container
+    {
+        $container->set(static::PLUGINS_CUSTOMER_GROUP_FORM_TAB_EXPANDER, function (): array {
+            return $this->getCustomerGroupFormTabExpanderPlugins();
+        });
+
+        return $container;
+    }
+
+    protected function addCustomerGroupFormExpanderPlugins(Container $container): Container
+    {
+        $container->set(static::PLUGINS_CUSTOMER_GROUP_FORM_EXPANDER, function (): array {
+            return $this->getCustomerGroupFormExpanderPlugins();
+        });
+
+        return $container;
+    }
+
+    protected function addCustomerGroupViewExpanderPlugins(Container $container): Container
+    {
+        $container->set(static::PLUGINS_CUSTOMER_GROUP_VIEW_EXPANDER, function (): array {
+            return $this->getCustomerGroupViewExpanderPlugins();
+        });
+
+        return $container;
+    }
+
+    /**
+     * @return list<\Spryker\Zed\CustomerGroupExtension\Dependency\Plugin\CustomerGroupPostSavePluginInterface>
+     */
+    protected function getCustomerGroupPostSavePlugins(): array
+    {
+        return [];
+    }
+
+    /**
+     * @return list<\Spryker\Zed\CustomerGroupExtension\Dependency\Plugin\CustomerGroupFormTabExpanderPluginInterface>
+     */
+    protected function getCustomerGroupFormTabExpanderPlugins(): array
+    {
+        return [];
+    }
+
+    /**
+     * @return list<\Spryker\Zed\CustomerGroupExtension\Dependency\Plugin\CustomerGroupFormExpanderPluginInterface>
+     */
+    protected function getCustomerGroupFormExpanderPlugins(): array
+    {
+        return [];
+    }
+
+    /**
+     * @return list<\Spryker\Zed\CustomerGroupExtension\Dependency\Plugin\CustomerGroupViewExpanderPluginInterface>
+     */
+    protected function getCustomerGroupViewExpanderPlugins(): array
+    {
+        return [];
     }
 }
