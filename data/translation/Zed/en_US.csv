@@ -23,3 +23,10 @@ message.customer_group.validation.customer_not_found,"The customer was not found
 Customers,Customers
 "General Information","General Information"
 Name,Name
+"Apply filters","Apply filters"
+"Reset filters","Reset filters"
+"Assignment type","Assignment type"
+"Select assignment type","Select assignment type"
+"Assigned to","Assigned to"
+"Type at least 3 characters","Type at least 3 characters"
+message.customer_group.not_found,"The customer group was not found."

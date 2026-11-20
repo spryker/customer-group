@@ -11,7 +11,13 @@ use Generated\Shared\Transfer\CustomerGroupTransfer;
 use Spryker\Zed\CustomerGroup\Communication\Expander\CustomerGroupViewExpander;
 use Spryker\Zed\CustomerGroup\Communication\Expander\CustomerGroupViewExpanderInterface;
 use Spryker\Zed\CustomerGroup\Communication\Form\CustomerGroupForm;
+use Spryker\Zed\CustomerGroup\Communication\Form\CustomerGroupTableFilterForm;
 use Spryker\Zed\CustomerGroup\Communication\Form\DataProvider\CustomerGroupFormDataProvider;
+use Spryker\Zed\CustomerGroup\Communication\Form\DataProvider\CustomerGroupTableFilterFormDataProvider;
+use Spryker\Zed\CustomerGroup\Communication\Reader\CustomerGroupSuggestionReader;
+use Spryker\Zed\CustomerGroup\Communication\Reader\CustomerGroupSuggestionReaderInterface;
+use Spryker\Zed\CustomerGroup\Communication\Resolver\CustomerGroupAssignmentFilterResolver;
+use Spryker\Zed\CustomerGroup\Communication\Resolver\CustomerGroupAssignmentFilterResolverInterface;
 use Spryker\Zed\CustomerGroup\Communication\Resolver\UpdateRedirectUrlResolver;
 use Spryker\Zed\CustomerGroup\Communication\Resolver\UpdateRedirectUrlResolverInterface;
 use Spryker\Zed\CustomerGroup\Communication\Sorter\SectionSorter;
@@ -25,6 +31,8 @@ use Spryker\Zed\CustomerGroup\Communication\Tabs\CustomerGroupFormTabs;
 use Spryker\Zed\CustomerGroup\CustomerGroupDependencyProvider;
 use Spryker\Zed\CustomerGroup\Dependency\Service\CustomerGroupToUtilSanitizeServiceInterface;
 use Spryker\Zed\Kernel\Communication\AbstractCommunicationFactory;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * @method \Spryker\Zed\CustomerGroup\Persistence\CustomerGroupQueryContainerInterface getQueryContainer()
@@ -43,6 +51,35 @@ class CustomerGroupCommunicationFactory extends AbstractCommunicationFactory
             $this->getQueryContainer(),
             $this->getDateFormatterService(),
         );
+    }
+
+    public function createCustomerGroupTableFilterForm(Request $request): FormInterface
+    {
+        $customerGroupTableFilterFormDataProvider = $this->createCustomerGroupTableFilterFormDataProvider();
+
+        return $this->getFormFactory()->create(
+            CustomerGroupTableFilterForm::class,
+            $customerGroupTableFilterFormDataProvider->getData(),
+            $customerGroupTableFilterFormDataProvider->getOptions($request),
+        );
+    }
+
+    public function createCustomerGroupTableFilterFormDataProvider(): CustomerGroupTableFilterFormDataProvider
+    {
+        return new CustomerGroupTableFilterFormDataProvider($this->createCustomerGroupAssignmentFilterResolver());
+    }
+
+    public function createCustomerGroupAssignmentFilterResolver(): CustomerGroupAssignmentFilterResolverInterface
+    {
+        return new CustomerGroupAssignmentFilterResolver($this->getCustomerGroupAssignmentFilterPlugins());
+    }
+
+    /**
+     * @return list<\Spryker\Zed\CustomerGroupExtension\Dependency\Plugin\CustomerGroupAssignmentFilterPluginInterface>
+     */
+    public function getCustomerGroupAssignmentFilterPlugins(): array
+    {
+        return $this->getProvidedDependency(CustomerGroupDependencyProvider::PLUGINS_CUSTOMER_GROUP_ASSIGNMENT_FILTER);
     }
 
     /**
@@ -151,6 +188,11 @@ class CustomerGroupCommunicationFactory extends AbstractCommunicationFactory
     public function getCustomerGroupViewExpanderPlugins(): array
     {
         return $this->getProvidedDependency(CustomerGroupDependencyProvider::PLUGINS_CUSTOMER_GROUP_VIEW_EXPANDER);
+    }
+
+    public function createCustomerGroupSuggestionReader(): CustomerGroupSuggestionReaderInterface
+    {
+        return new CustomerGroupSuggestionReader($this->getRepository(), $this->getConfig());
     }
 
     public function createUpdateRedirectUrlResolver(): UpdateRedirectUrlResolverInterface

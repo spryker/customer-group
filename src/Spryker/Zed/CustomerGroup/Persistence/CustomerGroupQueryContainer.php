@@ -7,6 +7,9 @@
 
 namespace Spryker\Zed\CustomerGroup\Persistence;
 
+use Generated\Shared\Transfer\CustomerGroupConditionsTransfer;
+use Generated\Shared\Transfer\CustomerGroupCriteriaTransfer;
+use Orm\Zed\CustomerGroup\Persistence\SpyCustomerGroupQuery;
 use Spryker\Zed\Kernel\Persistence\AbstractQueryContainer;
 
 /**
@@ -88,5 +91,24 @@ class CustomerGroupQueryContainer extends AbstractQueryContainer implements Cust
     {
         return $this->getFactory()
             ->createCustomerQuery();
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @api
+     */
+    public function queryCustomerGroupByCriteria(CustomerGroupCriteriaTransfer $customerGroupCriteriaTransfer): SpyCustomerGroupQuery
+    {
+        $customerGroupQueryBuilder = $this->getFactory()->createCustomerGroupQueryBuilder();
+        $customerGroupQuery = $customerGroupQueryBuilder->addQueryExpanderJoins(
+            $this->getFactory()->createCustomerGroupQuery(),
+            $customerGroupCriteriaTransfer,
+        );
+
+        return $customerGroupQueryBuilder->applyCustomerGroupConditions(
+            $customerGroupQuery,
+            $customerGroupCriteriaTransfer->getCustomerGroupConditions() ?? new CustomerGroupConditionsTransfer(),
+        );
     }
 }

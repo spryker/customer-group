@@ -7,10 +7,12 @@
 
 namespace Spryker\Zed\CustomerGroup\Communication\Table;
 
+use Generated\Shared\Transfer\CustomerGroupCriteriaTransfer;
 use Orm\Zed\CustomerGroup\Persistence\Map\SpyCustomerGroupTableMap;
 use Orm\Zed\CustomerGroup\Persistence\SpyCustomerGroup;
 use Propel\Runtime\Collection\ObjectCollection;
 use Spryker\Service\UtilDateTime\UtilDateTimeServiceInterface;
+use Spryker\Zed\CustomerGroup\Communication\Form\CustomerGroupTableFilterForm;
 use Spryker\Zed\CustomerGroup\Persistence\CustomerGroupQueryContainerInterface;
 use Spryker\Zed\Gui\Communication\Table\AbstractTable;
 use Spryker\Zed\Gui\Communication\Table\TableConfiguration;
@@ -43,6 +45,11 @@ class CustomerGroupTable extends AbstractTable
     public const COL_CREATED_AT = 'created_at';
 
     /**
+     * @uses \Spryker\Zed\CustomerGroup\Communication\Controller\IndexController::tableAction()
+     */
+    protected const string URL_TABLE = 'table';
+
+    /**
      * @var \Spryker\Zed\CustomerGroup\Persistence\CustomerGroupQueryContainerInterface
      */
     protected $customerGroupQueryContainer;
@@ -52,10 +59,20 @@ class CustomerGroupTable extends AbstractTable
      */
     protected $utilDateTimeService;
 
-    public function __construct(CustomerGroupQueryContainerInterface $customerQueryContainer, UtilDateTimeServiceInterface $utilDateTimeService)
-    {
+    protected CustomerGroupCriteriaTransfer $customerGroupCriteriaTransfer;
+
+    public function __construct(
+        CustomerGroupQueryContainerInterface $customerQueryContainer,
+        UtilDateTimeServiceInterface $utilDateTimeService
+    ) {
         $this->customerGroupQueryContainer = $customerQueryContainer;
         $this->utilDateTimeService = $utilDateTimeService;
+        $this->customerGroupCriteriaTransfer = new CustomerGroupCriteriaTransfer();
+    }
+
+    public function applyCriteria(CustomerGroupCriteriaTransfer $customerGroupCriteriaTransfer): void
+    {
+        $this->customerGroupCriteriaTransfer = $customerGroupCriteriaTransfer;
     }
 
     /**
@@ -81,7 +98,7 @@ class CustomerGroupTable extends AbstractTable
             static::COL_CREATED_AT,
         ]);
 
-        $config->setUrl('table');
+        $config->setUrl($this->buildTableUrl());
 
         $config->setSearchable([
             SpyCustomerGroupTableMap::COL_ID_CUSTOMER_GROUP,
@@ -100,7 +117,7 @@ class CustomerGroupTable extends AbstractTable
      */
     protected function prepareData(TableConfiguration $config)
     {
-        $query = $this->customerGroupQueryContainer->queryCustomerGroup();
+        $query = $this->customerGroupQueryContainer->queryCustomerGroupByCriteria($this->customerGroupCriteriaTransfer);
 
         /** @var \Propel\Runtime\Collection\ObjectCollection<\Orm\Zed\CustomerGroup\Persistence\SpyCustomerGroup> $customerGroupCollection */
         $customerGroupCollection = $this->runQuery($query, $config, true);
@@ -110,6 +127,17 @@ class CustomerGroupTable extends AbstractTable
         }
 
         return $this->mapCustomerGroupCollection($customerGroupCollection);
+    }
+
+    protected function buildTableUrl(): string
+    {
+        $filterData = $this->getRequest()->query->all(CustomerGroupTableFilterForm::BLOCK_PREFIX);
+
+        if ($filterData === []) {
+            return static::URL_TABLE;
+        }
+
+        return sprintf('%s?%s', static::URL_TABLE, http_build_query([CustomerGroupTableFilterForm::BLOCK_PREFIX => $filterData]));
     }
 
     /**

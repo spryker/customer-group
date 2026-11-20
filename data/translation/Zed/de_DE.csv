@@ -23,3 +23,10 @@ message.customer_group.validation.customer_not_found,"Der Kunde wurde nicht gefu
 Customers,Kunden
 "General Information","Allgemeine Informationen"
 Name,Name
+"Apply filters","Filter anwenden"
+"Reset filters","Filter zurücksetzen"
+"Assignment type",Zuordnungstyp
+"Select assignment type","Zuordnungstyp auswählen"
+"Assigned to","Zugeordnet zu"
+"Type at least 3 characters","Mindestens 3 Zeichen eingeben"
+message.customer_group.not_found,"Die Kundengruppe wurde nicht gefunden."

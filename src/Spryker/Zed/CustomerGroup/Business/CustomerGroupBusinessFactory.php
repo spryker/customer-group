@@ -8,6 +8,8 @@
 namespace Spryker\Zed\CustomerGroup\Business;
 
 use Spryker\Zed\CustomerGroup\Business\Model\CustomerGroup;
+use Spryker\Zed\CustomerGroup\Business\Reader\CustomerGroupCollectionReader;
+use Spryker\Zed\CustomerGroup\Business\Reader\CustomerGroupCollectionReaderInterface;
 use Spryker\Zed\CustomerGroup\Business\Resolver\CustomerGroupAssignmentResolver;
 use Spryker\Zed\CustomerGroup\Business\Resolver\CustomerGroupAssignmentResolverInterface;
 use Spryker\Zed\CustomerGroup\Business\Validator\CustomerGroupCustomerExistenceValidator;
@@ -79,5 +81,21 @@ class CustomerGroupBusinessFactory extends AbstractBusinessFactory
     public function createCustomerGroupAssignmentResolver(): CustomerGroupAssignmentResolverInterface
     {
         return new CustomerGroupAssignmentResolver($this->getRepository());
+    }
+
+    public function createCustomerGroupCollectionReader(): CustomerGroupCollectionReaderInterface
+    {
+        return new CustomerGroupCollectionReader(
+            $this->getRepository(),
+            $this->getCustomerGroupProviderPlugins(),
+        );
+    }
+
+    /**
+     * @return list<\Spryker\Zed\CustomerGroupExtension\Dependency\Plugin\CustomerGroupProviderPluginInterface>
+     */
+    public function getCustomerGroupProviderPlugins(): array
+    {
+        return $this->getProvidedDependency(CustomerGroupDependencyProvider::PLUGINS_CUSTOMER_GROUP_PROVIDER);
     }
 }

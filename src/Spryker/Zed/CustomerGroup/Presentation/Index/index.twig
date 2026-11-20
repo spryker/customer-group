@@ -16,10 +16,35 @@
 
         {% block widget_content %}
 
+            {% if customerGroupTableFilterForm is defined %}
+                {% block table_filter_form %}
+                    <div class="table-filter-container mb-3">
+                        {{ form_start(customerGroupTableFilterForm, {attr: {class: 'table-filter-form form-filter', id: 'customer-group-filter-form', 'data-qa': 'customer-group-filter-form'}}) }}
+                        <div class="row">
+                            {% for field in customerGroupTableFilterForm.children %}
+                                <div class="col-md-6 col-lg-3">
+                                    {{ form_row(field) }}
+                                </div>
+                            {% endfor %}
+                        </div>
+                        <div>
+                            <button type="submit" class="btn btn-outline-primary me-2" data-qa="customer-group-filter-apply">{{ 'Apply filters' | trans }}</button>
+                            <a href="{{ url('/customer-group') }}" class="btn btn-link" data-qa="customer-group-filter-reset">{{ 'Reset filters' | trans }}</a>
+                        </div>
+                        {{ form_end(customerGroupTableFilterForm) }}
+                    </div>
+                {% endblock %}
+            {% endif %}
+
             {{ customerGroupTable | raw }}
 
         {% endblock %}
 
     {% endembed %}
 
+{% endblock %}
+
+{% block footer_js %}
+    {{ parent() }}
+    <script src="{{ assetsPath('js/spryker-zed-customer-group-main.js') }}"></script>
 {% endblock %}

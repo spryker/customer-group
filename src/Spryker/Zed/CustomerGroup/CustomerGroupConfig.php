@@ -27,6 +27,19 @@ class CustomerGroupConfig extends AbstractBundleConfig
 
     public const string FORM_TAB_NAME_CUSTOMER_ASSIGNMENT = 'customer-assignment';
 
+    protected const int CUSTOMER_GROUP_SUGGESTION_LIMIT = 20;
+
+    /**
+     * Specification:
+     * - Returns the maximum number of customer groups the Back Office suggest endpoint returns for one search term.
+     *
+     * @api
+     */
+    public function getCustomerGroupSuggestionLimit(): int
+    {
+        return static::CUSTOMER_GROUP_SUGGESTION_LIMIT;
+    }
+
     /**
      * Specification:
      * - Returns the sortable fields of the customer group collection, mapping each publicly accepted

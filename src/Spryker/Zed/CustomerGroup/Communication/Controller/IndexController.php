@@ -7,7 +7,12 @@
 
 namespace Spryker\Zed\CustomerGroup\Communication\Controller;
 
+use Generated\Shared\Transfer\CustomerGroupTableFilterTransfer;
+use Spryker\Zed\CustomerGroup\Communication\Table\CustomerGroupTable;
 use Spryker\Zed\Kernel\Communication\Controller\AbstractController;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * @method \Spryker\Zed\CustomerGroup\Business\CustomerGroupFacadeInterface getFacade()
@@ -18,26 +23,47 @@ use Spryker\Zed\Kernel\Communication\Controller\AbstractController;
 class IndexController extends AbstractController
 {
     /**
-     * @return array
+     * @return array<string, mixed>
      */
-    public function indexAction()
+    public function indexAction(Request $request): array
     {
-        $table = $this->getFactory()
-            ->createCustomerGroupTable();
+        $customerGroupTableFilterForm = $this->createHandledCustomerGroupTableFilterForm($request);
+        $viewData = [
+            'customerGroupTable' => $this->createFilteredCustomerGroupTable($customerGroupTableFilterForm)->render(),
+        ];
 
-        return $this->viewResponse([
-            'customerGroupTable' => $table->render(),
-        ]);
+        if (!$this->getFactory()->createCustomerGroupAssignmentFilterResolver()->hasAssignmentFilters()) {
+            return $this->viewResponse($viewData);
+        }
+
+        $viewData['customerGroupTableFilterForm'] = $customerGroupTableFilterForm->createView();
+
+        return $this->viewResponse($viewData);
     }
 
-    /**
-     * @return \Symfony\Component\HttpFoundation\JsonResponse
-     */
-    public function tableAction()
+    public function tableAction(Request $request): JsonResponse
     {
-        $table = $this->getFactory()
-            ->createCustomerGroupTable();
+        $customerGroupTable = $this->createFilteredCustomerGroupTable($this->createHandledCustomerGroupTableFilterForm($request));
 
-        return $this->jsonResponse($table->fetchData());
+        return $this->jsonResponse($customerGroupTable->fetchData());
+    }
+
+    protected function createHandledCustomerGroupTableFilterForm(Request $request): FormInterface
+    {
+        return $this->getFactory()
+            ->createCustomerGroupTableFilterForm($request)
+            ->handleRequest($request);
+    }
+
+    protected function createFilteredCustomerGroupTable(FormInterface $customerGroupTableFilterForm): CustomerGroupTable
+    {
+        $customerGroupTable = $this->getFactory()->createCustomerGroupTable();
+        $customerGroupTable->applyCriteria(
+            $this->getFactory()
+                ->createCustomerGroupAssignmentFilterResolver()
+                ->createCustomerGroupCriteria($customerGroupTableFilterForm->getData() ?? new CustomerGroupTableFilterTransfer()),
+        );
+
+        return $customerGroupTable;
     }
 }

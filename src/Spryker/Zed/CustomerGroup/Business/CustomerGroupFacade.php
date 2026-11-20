@@ -137,6 +137,18 @@ class CustomerGroupFacade extends AbstractFacade implements CustomerGroupFacadeI
      * {@inheritDoc}
      *
      * @api
+     */
+    public function getCustomerGroupCollectionByCustomer(CustomerTransfer $customerTransfer): CustomerGroupCollectionTransfer
+    {
+        return $this->getFactory()
+            ->createCustomerGroupCollectionReader()
+            ->getCustomerGroupCollectionByCustomer($customerTransfer);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @api
      *
      * @param \Generated\Shared\Transfer\CustomerTransfer $customerTransfer
      *

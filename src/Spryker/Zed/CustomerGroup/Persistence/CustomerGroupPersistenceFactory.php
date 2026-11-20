@@ -10,7 +10,10 @@ namespace Spryker\Zed\CustomerGroup\Persistence;
 use Orm\Zed\Customer\Persistence\SpyCustomerQuery;
 use Orm\Zed\CustomerGroup\Persistence\SpyCustomerGroupQuery;
 use Orm\Zed\CustomerGroup\Persistence\SpyCustomerGroupToCustomerQuery;
+use Spryker\Zed\CustomerGroup\CustomerGroupDependencyProvider;
 use Spryker\Zed\CustomerGroup\Persistence\Propel\Mapper\CustomerGroupMapper;
+use Spryker\Zed\CustomerGroup\Persistence\Propel\QueryBuilder\CustomerGroupQueryBuilder;
+use Spryker\Zed\CustomerGroup\Persistence\Propel\QueryBuilder\CustomerGroupQueryBuilderInterface;
 use Spryker\Zed\Kernel\Persistence\AbstractPersistenceFactory;
 
 /**
@@ -47,5 +50,18 @@ class CustomerGroupPersistenceFactory extends AbstractPersistenceFactory
     public function createCustomerGroupMapper(): CustomerGroupMapper
     {
         return new CustomerGroupMapper();
+    }
+
+    public function createCustomerGroupQueryBuilder(): CustomerGroupQueryBuilderInterface
+    {
+        return new CustomerGroupQueryBuilder($this->getCustomerGroupQueryExpanderPlugins());
+    }
+
+    /**
+     * @return list<\Spryker\Zed\CustomerGroupExtension\Dependency\Plugin\CustomerGroupQueryExpanderPluginInterface>
+     */
+    public function getCustomerGroupQueryExpanderPlugins(): array
+    {
+        return $this->getProvidedDependency(CustomerGroupDependencyProvider::PLUGINS_CUSTOMER_GROUP_QUERY_EXPANDER);
     }
 }

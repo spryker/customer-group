@@ -125,6 +125,20 @@ interface CustomerGroupFacadeInterface
 
     /**
      * Specification:
+     * - Requires `CustomerTransfer.idCustomer`.
+     * - Retrieves the customer groups the customer is directly assigned to.
+     * - Executes the stack of {@link \Spryker\Zed\CustomerGroupExtension\Dependency\Plugin\CustomerGroupProviderPluginInterface}
+     *   plugins and adds the groups they provide: the groups the customer belongs to in other ways, for example through
+     *   their company.
+     * - Returns each group once.
+     * - Use {@link static::getCustomerGroupCollectionByIdCustomer()} for the direct assignments only.
+     *
+     * @api
+     */
+    public function getCustomerGroupCollectionByCustomer(CustomerTransfer $customerTransfer): CustomerGroupCollectionTransfer;
+
+    /**
+     * Specification:
      *  - Finds all groups which a customer participates
      *  - Removes each customer group in the found batch
      *
@@ -140,6 +154,14 @@ interface CustomerGroupFacadeInterface
      * Specification:
      *  - Retrieves a customer group collection filtered by the given criteria.
      *  - Supported conditions: uuids, names, and a free-text search term matched against name and description.
+     *  - Narrows by `CustomerGroupConditionsTransfer.customerIds` to the groups at least one of the given customers is
+     *    directly assigned to.
+     *  - Narrows by `CustomerGroupConditionsTransfer.customerReferences` to the groups at least one of the given
+     *    customers is directly assigned to.
+     *  - With both set, a group matches when it has a customer of `customerIds` and a customer of `customerReferences`.
+     *    The two may be different customers.
+     *  - Executes the `CustomerGroupQueryExpanderPluginInterface` stack, which narrows by the conditions other
+     *    modules contribute, for example the companies the groups are assigned to. All conditions are combined with AND.
      *  - Applies `CustomerGroupConditionsTransfer.uuids` only while the `spy_customer_group.uuid`
      *    column is installed, as that column is contributed by an optional schema extension rather
      *    than by this module.

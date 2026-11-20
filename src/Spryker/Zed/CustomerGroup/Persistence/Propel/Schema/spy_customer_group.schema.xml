@@ -34,6 +34,10 @@
             <unique-column name="fk_customer"/>
         </unique>
 
+        <index name="spy_customer_group_to_customer-fk_customer">
+            <index-column name="fk_customer"/>
+        </index>
+
         <id-method-parameter value="spy_customer_group_to_customer_pk_seq"/>
     </table>
 

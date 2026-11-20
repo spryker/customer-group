@@ -46,6 +46,12 @@ class CustomerGroupDependencyProvider extends AbstractBundleDependencyProvider
 
     public const string PLUGINS_CUSTOMER_GROUP_VIEW_EXPANDER = 'PLUGINS_CUSTOMER_GROUP_VIEW_EXPANDER';
 
+    public const string PLUGINS_CUSTOMER_GROUP_PROVIDER = 'PLUGINS_CUSTOMER_GROUP_PROVIDER';
+
+    public const string PLUGINS_CUSTOMER_GROUP_ASSIGNMENT_FILTER = 'PLUGINS_CUSTOMER_GROUP_ASSIGNMENT_FILTER';
+
+    public const string PLUGINS_CUSTOMER_GROUP_QUERY_EXPANDER = 'PLUGINS_CUSTOMER_GROUP_QUERY_EXPANDER';
+
     /**
      * @param \Spryker\Zed\Kernel\Container $container
      *
@@ -56,6 +62,21 @@ class CustomerGroupDependencyProvider extends AbstractBundleDependencyProvider
         $container = parent::provideBusinessLayerDependencies($container);
 
         $container = $this->addCustomerGroupPostSavePlugins($container);
+        $container = $this->addCustomerGroupProviderPlugins($container);
+
+        return $container;
+    }
+
+    /**
+     * @param \Spryker\Zed\Kernel\Container $container
+     *
+     * @return \Spryker\Zed\Kernel\Container
+     */
+    public function providePersistenceLayerDependencies(Container $container)
+    {
+        $container = parent::providePersistenceLayerDependencies($container);
+
+        $container = $this->addCustomerGroupQueryExpanderPlugins($container);
 
         return $container;
     }
@@ -76,8 +97,43 @@ class CustomerGroupDependencyProvider extends AbstractBundleDependencyProvider
         $container = $this->addCustomerGroupFormTabExpanderPlugins($container);
         $container = $this->addCustomerGroupFormExpanderPlugins($container);
         $container = $this->addCustomerGroupViewExpanderPlugins($container);
+        $container = $this->addCustomerGroupAssignmentFilterPlugins($container);
 
         return $container;
+    }
+
+    protected function addCustomerGroupAssignmentFilterPlugins(Container $container): Container
+    {
+        $container->set(static::PLUGINS_CUSTOMER_GROUP_ASSIGNMENT_FILTER, function (): array {
+            return $this->getCustomerGroupAssignmentFilterPlugins();
+        });
+
+        return $container;
+    }
+
+    /**
+     * @return list<\Spryker\Zed\CustomerGroupExtension\Dependency\Plugin\CustomerGroupAssignmentFilterPluginInterface>
+     */
+    protected function getCustomerGroupAssignmentFilterPlugins(): array
+    {
+        return [];
+    }
+
+    protected function addCustomerGroupQueryExpanderPlugins(Container $container): Container
+    {
+        $container->set(static::PLUGINS_CUSTOMER_GROUP_QUERY_EXPANDER, function (): array {
+            return $this->getCustomerGroupQueryExpanderPlugins();
+        });
+
+        return $container;
+    }
+
+    /**
+     * @return list<\Spryker\Zed\CustomerGroupExtension\Dependency\Plugin\CustomerGroupQueryExpanderPluginInterface>
+     */
+    protected function getCustomerGroupQueryExpanderPlugins(): array
+    {
+        return [];
     }
 
     /**
@@ -142,6 +198,15 @@ class CustomerGroupDependencyProvider extends AbstractBundleDependencyProvider
         return $container;
     }
 
+    protected function addCustomerGroupProviderPlugins(Container $container): Container
+    {
+        $container->set(static::PLUGINS_CUSTOMER_GROUP_PROVIDER, function (): array {
+            return $this->getCustomerGroupProviderPlugins();
+        });
+
+        return $container;
+    }
+
     protected function addCustomerGroupFormTabExpanderPlugins(Container $container): Container
     {
         $container->set(static::PLUGINS_CUSTOMER_GROUP_FORM_TAB_EXPANDER, function (): array {
@@ -173,6 +238,14 @@ class CustomerGroupDependencyProvider extends AbstractBundleDependencyProvider
      * @return list<\Spryker\Zed\CustomerGroupExtension\Dependency\Plugin\CustomerGroupPostSavePluginInterface>
      */
     protected function getCustomerGroupPostSavePlugins(): array
+    {
+        return [];
+    }
+
+    /**
+     * @return list<\Spryker\Zed\CustomerGroupExtension\Dependency\Plugin\CustomerGroupProviderPluginInterface>
+     */
+    protected function getCustomerGroupProviderPlugins(): array
     {
         return [];
     }

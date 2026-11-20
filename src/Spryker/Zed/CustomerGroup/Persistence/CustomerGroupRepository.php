@@ -9,6 +9,7 @@ namespace Spryker\Zed\CustomerGroup\Persistence;
 
 use Generated\Shared\Transfer\CustomerCollectionTransfer;
 use Generated\Shared\Transfer\CustomerGroupCollectionTransfer;
+use Generated\Shared\Transfer\CustomerGroupConditionsTransfer;
 use Generated\Shared\Transfer\CustomerGroupCriteriaTransfer;
 use Generated\Shared\Transfer\CustomerGroupCustomerCriteriaTransfer;
 use Generated\Shared\Transfer\CustomerTransfer;
@@ -53,10 +54,11 @@ class CustomerGroupRepository extends AbstractRepository implements CustomerGrou
     ): CustomerGroupCollectionTransfer {
         $paginationTransfer = $customerGroupCriteriaTransfer->getPagination();
 
-        $query = $this->applyCustomerGroupConditions(
+        $query = $this->getFactory()->createCustomerGroupQueryBuilder()->addQueryExpanderJoins(
             $this->getFactory()->createCustomerGroupQuery(),
             $customerGroupCriteriaTransfer,
         );
+        $query = $this->applyCustomerGroupConditions($query, $customerGroupCriteriaTransfer);
         $query = $this->applyCustomerGroupSort($query, $customerGroupCriteriaTransfer->getSortCollection());
         $query = $this->applyCustomerGroupPagination($query, $paginationTransfer);
 
@@ -175,7 +177,7 @@ class CustomerGroupRepository extends AbstractRepository implements CustomerGrou
             return [];
         }
 
-        $customerGroupRows = $this->applyCaseInsensitiveNameFilter(
+        $customerGroupRows = $this->getFactory()->createCustomerGroupQueryBuilder()->applyCaseInsensitiveNameFilter(
             $this->getFactory()->createCustomerGroupQuery(),
             $names,
         )
@@ -198,57 +200,10 @@ class CustomerGroupRepository extends AbstractRepository implements CustomerGrou
         SpyCustomerGroupQuery $query,
         CustomerGroupCriteriaTransfer $customerGroupCriteriaTransfer
     ): SpyCustomerGroupQuery {
-        $customerGroupConditionsTransfer = $customerGroupCriteriaTransfer->getCustomerGroupConditions();
-
-        if ($customerGroupConditionsTransfer === null) {
-            return $query;
-        }
-
-        /** @phpstan-ignore function.alreadyNarrowedType */
-        if ($customerGroupConditionsTransfer->getUuids() && method_exists($query, 'filterByUuid_In')) {
-            $query->filterByUuid_In($customerGroupConditionsTransfer->getUuids());
-        }
-
-        if ($customerGroupConditionsTransfer->getNames()) {
-            $this->applyCaseInsensitiveNameFilter($query, $customerGroupConditionsTransfer->getNames());
-        }
-
-        $searchTerm = $customerGroupConditionsTransfer->getSearchTerm();
-
-        if ($searchTerm !== null && $searchTerm !== '') {
-            $pattern = sprintf(static::LIKE_WILDCARD, $searchTerm);
-
-            $query
-                ->condition('nameLike', sprintf('%s LIKE ?', SpyCustomerGroupTableMap::COL_NAME), $pattern)
-                ->condition('descriptionLike', sprintf('%s LIKE ?', SpyCustomerGroupTableMap::COL_DESCRIPTION), $pattern)
-                ->where(['nameLike', 'descriptionLike'], Criteria::LOGICAL_OR);
-        }
-
-        return $query;
-    }
-
-    /**
-     * @param \Orm\Zed\CustomerGroup\Persistence\SpyCustomerGroupQuery $query
-     * @param array<int, string> $names
-     *
-     * @return \Orm\Zed\CustomerGroup\Persistence\SpyCustomerGroupQuery
-     */
-    protected function applyCaseInsensitiveNameFilter(SpyCustomerGroupQuery $query, array $names): SpyCustomerGroupQuery
-    {
-        $conditionNames = [];
-
-        foreach (array_values($names) as $index => $name) {
-            $conditionName = sprintf('customerGroupName%d', $index);
-            $conditionNames[] = $conditionName;
-
-            $query->condition(
-                $conditionName,
-                sprintf('LOWER(%s) = ?', SpyCustomerGroupTableMap::COL_NAME),
-                mb_strtolower($name),
-            );
-        }
-
-        return $query->where($conditionNames, Criteria::LOGICAL_OR);
+        return $this->getFactory()->createCustomerGroupQueryBuilder()->applyCustomerGroupConditions(
+            $query,
+            $customerGroupCriteriaTransfer->getCustomerGroupConditions() ?? new CustomerGroupConditionsTransfer(),
+        );
     }
 
     protected function applyCustomerGroupCustomerConditions(

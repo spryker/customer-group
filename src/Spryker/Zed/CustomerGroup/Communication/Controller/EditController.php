@@ -28,19 +28,34 @@ class EditController extends AbstractController
      */
     public const MESSAGE_CUSTOMER_GROUP_UPDATE_SUCCESS = 'Customer group was updated successfully.';
 
+    protected const string MESSAGE_CUSTOMER_GROUP_NOT_FOUND = 'message.customer_group.not_found';
+
+    /**
+     * @uses \Spryker\Zed\CustomerGroup\Communication\Controller\IndexController::indexAction()
+     */
+    protected const string URL_CUSTOMER_GROUP_LIST = '/customer-group';
+
     /**
      * @param \Symfony\Component\HttpFoundation\Request $request
      *
-     * @return \Symfony\Component\HttpFoundation\RedirectResponse|array
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|array<string, mixed>
      */
     public function indexAction(Request $request)
     {
         $idCustomerGroup = $this->castId($request->query->get(static::PARAM_ID_CUSTOMER_GROUP));
 
         $dataProvider = $this->getFactory()->createCustomerGroupFormDataProvider();
+        $customerGroupTransfer = $dataProvider->getData($idCustomerGroup);
+
+        if ($customerGroupTransfer->getIdCustomerGroup() === null) {
+            $this->addErrorMessage(static::MESSAGE_CUSTOMER_GROUP_NOT_FOUND);
+
+            return $this->redirectResponse(static::URL_CUSTOMER_GROUP_LIST);
+        }
+
         $form = $this->getFactory()
             ->createCustomerGroupForm(
-                $dataProvider->getData($idCustomerGroup),
+                $customerGroupTransfer,
                 $dataProvider->getOptions($idCustomerGroup),
             )
             ->handleRequest($request);
